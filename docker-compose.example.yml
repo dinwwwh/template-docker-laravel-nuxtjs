@@ -1,11 +1,8 @@
 version: "3.7"
 services:
-  # Two services for laravel
+  # Laravel Service
   laravel:
     build:
-      args:
-        user: dinhdjj
-        uid: 1000
       context: ./laravel
       dockerfile: Dockerfile
     image: laravel-image
@@ -13,7 +10,7 @@ services:
     restart: unless-stopped
     working_dir: /var/www/
     volumes:
-      - ./laravel/src/:/var/www
+      - ./laravel/src/:/var/www:rw
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - app-network

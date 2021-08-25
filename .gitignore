@@ -2,5 +2,6 @@ nuxtjs/src/**
 laravel/src/**
 mysql/data/**
 nginx/log/**
+nginx/ssl/**
 .env
 docker-compose.yml
