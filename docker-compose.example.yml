@@ -1,0 +1,66 @@
+version: "3.7"
+services:
+  # Two services for laravel
+  laravel:
+    build:
+      args:
+        user: dinhdjj
+        uid: 1000
+      context: ./laravel
+      dockerfile: Dockerfile
+    image: laravel-image
+    container_name: laravel-container
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./laravel/src/:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+
+  # Nginx - Service as route for app
+  nginx:
+    image: nginx:1.17-alpine
+    container_name: nginx-container
+    restart: unless-stopped
+    ports:
+      - "${NUXTJS_PORT:-3000}:80" # PORT FOR LARAVEL
+      - "${LARAVEL_PORT:-8000}:443" # PORT FOR LARAVEL
+    volumes:
+      - ./laravel/src/:/var/www
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl/:/etc/ssl/
+      - ./nginx/log/:/var/log/nginx/
+    networks:
+      - app-network
+
+  #Nuxtjs Service
+  nuxtjs:
+    build:
+      context: ./nuxtjs/src/
+      dockerfile: Dockerfile
+    image: nuxtjs-image
+    container_name: nuxtjs-container
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  #Mysql Service
+  mysql:
+    image: mysql:8.0.26
+    container_name: mysql-container
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: "${MYSQL_DATABASE:-default}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-default}"
+      MYSQL_USER: "${MYSQL_USER:-default}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:-default}"
+      SERVICE_NAME: mysql
+    volumes:
+      - ./mysql/data/:/var/lib/mysql/
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
