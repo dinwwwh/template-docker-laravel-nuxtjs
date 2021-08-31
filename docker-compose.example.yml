@@ -34,7 +34,7 @@ services:
   #Nuxtjs Service
   nuxtjs:
     build:
-      context: ./nuxtjs/src/
+      context: ./nuxtjs
       dockerfile: Dockerfile
     image: nuxtjs-image
     container_name: nuxtjs-container
